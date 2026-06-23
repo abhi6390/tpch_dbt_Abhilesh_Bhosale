@@ -1,0 +1,180 @@
+version: 2
+
+models:
+
+  # -------------------------------------------------------------------
+  # STG_CUSTOMERS
+  # -------------------------------------------------------------------
+  - name: stg_customers
+    description: "Staging model for customer data with renamed columns and derived attributes."
+
+    columns:
+      - name: customer_key
+        description: "Unique customer identifier."
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_name
+        description: "Customer name."
+
+      - name: nation_key
+        description: "Foreign key to nation."
+
+      - name: phone
+        description: "Customer phone number."
+
+      - name: acct_balance
+        description: "Customer account balance."
+
+      - name: market_segment
+        description: "Customer market segment."
+
+      - name: is_positive_balance
+        description: "True when customer account balance is greater than zero."
+
+  # -------------------------------------------------------------------
+  # STG_ORDERS
+  # -------------------------------------------------------------------
+  - name: stg_orders
+    description: "Staging model for orders with renamed columns and derived date attributes."
+
+    columns:
+      - name: order_key
+        description: "Unique order identifier."
+        tests:
+          - unique
+          - not_null
+
+      - name: customer_key
+        description: "Customer placing the order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customers')
+              field: customer_key
+
+      - name: order_status
+        description: "Current order status."
+        tests:
+          - accepted_values:
+              values: ['O', 'F', 'P']
+
+          - dbt_expectations.expect_column_proportion_of_unique_values_to_be_between:
+              min_value: 0
+              max_value: 1
+
+      - name: order_priority
+        description: "Priority assigned to the order."
+        tests:
+          - accepted_values:
+              values:
+                - '1-URGENT'
+                - '2-HIGH'
+                - '3-MEDIUM'
+                - '4-NOT SPECIFIED'
+                - '5-LOW'
+
+      - name: order_year
+        description: "Year extracted from order date."
+
+      - name: order_month
+        description: "Month extracted from order date."
+
+      - name: order_month_name
+        description: "Month name extracted from order date."
+
+      - name: order_day_of_week
+        description: "Day of week extracted from order date."
+
+  # -------------------------------------------------------------------
+  # STG_LINEITEMS
+  # -------------------------------------------------------------------
+  - name: stg_lineitems
+    description: "Staging model for order line items with calculated revenue and shipping metrics."
+
+    columns:
+      - name: order_key
+        description: "Associated order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_key
+
+      - name: line_number
+        description: "Line number within an order."
+
+      - name: part_key
+        description: "Associated part."
+        tests:
+          - not_null
+
+      - name: return_flag
+        description: "Return flag."
+        tests:
+          - accepted_values:
+              values: ['A', 'R', 'N']
+
+      - name: ship_mode
+        description: "Shipping mode."
+        tests:
+          - accepted_values:
+              values:
+                - AIR
+                - MAIL
+                - SHIP
+                - TRUCK
+                - RAIL
+                - REG AIR
+                - FOB
+
+      - name: discount
+        description: "Discount percentage."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0.00
+              max_value: 0.10
+
+      - name: effective_revenue
+        description: "Revenue after applying discount."
+
+      - name: tax_amount
+        description: "Calculated tax amount."
+
+      - name: is_returned
+        description: "True if the line item was returned."
+
+      - name: days_to_ship
+        description: "Difference between ship date and receipt date."
+
+  # -------------------------------------------------------------------
+  # STG_PARTS
+  # -------------------------------------------------------------------
+  - name: stg_parts
+    description: "Staging model for part master data."
+
+    columns:
+      - name: part_key
+        description: "Unique part identifier."
+        tests:
+          - unique
+          - not_null
+
+      - name: part_name
+        description: "Part name."
+
+      - name: brand
+        description: "Brand."
+
+      - name: part_type
+        description: "Part type."
+
+      - name: retail_price
+        description: "Retail price."
+
+      - name: price_formatted
+        description: "Retail price formatted as USD."
+
+      - name: is_large_part
+        description: "True when part size is greater than 25."

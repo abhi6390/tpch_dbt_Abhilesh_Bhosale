@@ -1,0 +1,205 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw TPC-H sample data from Snowflake."
+    database: SNOWFLAKE_SAMPLE_DATA
+    schema: TPCH_SF1
+
+    tables:
+
+      # ---------------------------------------------------------
+      # CUSTOMER
+      # ---------------------------------------------------------
+      - name: CUSTOMER
+        description: "Contains customer master data."
+
+        columns:
+          - name: C_CUSTKEY
+            description: "Unique customer identifier."
+            tests:
+              - unique
+              - not_null
+
+          - name: C_NAME
+            description: "Customer name."
+            tests:
+              - not_null
+
+          - name: C_MKTSEGMENT
+            description: "Customer market segment."
+            tests:
+              - not_null
+
+          - name: C_ACCTBAL
+            description: "Customer account balance."
+
+          - name: C_PHONE
+            description: "Customer phone number."
+
+          - name: C_ADDRESS
+            description: "Customer address."
+
+          - name: C_NATIONKEY
+            description: "Nation identifier."
+
+          - name: C_COMMENT
+            description: "Customer comment."
+
+      # ---------------------------------------------------------
+      # ORDERS
+      # ---------------------------------------------------------
+      - name: ORDERS
+        description: "Contains customer orders."
+
+        config:
+          loaded_at_field: O_ORDERDATE
+          freshness:
+            warn_after:
+              count: 365
+              period: day
+            error_after:
+              count: 730
+              period: day
+
+        columns:
+          - name: O_ORDERKEY
+            description: "Unique order identifier."
+            tests:
+              - unique
+              - not_null
+
+          - name: O_CUSTKEY
+            description: "Customer identifier."
+            tests:
+              - not_null
+
+          - name: O_ORDERSTATUS
+            description: "Order status."
+            tests:
+              - not_null
+
+          - name: O_ORDERDATE
+            description: "Order date."
+            tests:
+              - not_null
+
+          - name: O_TOTALPRICE
+            description: "Total price."
+
+          - name: O_ORDERPRIORITY
+            description: "Priority of the order."
+
+          - name: O_SHIPPRIORITY
+            description: "Shipping priority."
+
+          - name: O_COMMENT
+            description: "Order comment."
+
+      # ---------------------------------------------------------
+      # LINEITEM
+      # ---------------------------------------------------------
+      - name: LINEITEM
+        description: "Contains order line items."
+
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - L_ORDERKEY
+                - L_LINENUMBER
+
+        columns:
+          - name: L_ORDERKEY
+            description: "Order identifier."
+            tests:
+              - not_null
+
+          - name: L_LINENUMBER
+            description: "Line number."
+            tests:
+              - not_null
+
+          - name: L_PARTKEY
+            description: "Part identifier."
+            tests:
+              - not_null
+
+          - name: L_SUPPKEY
+            description: "Supplier identifier."
+
+          - name: L_QUANTITY
+            description: "Quantity ordered."
+
+          - name: L_EXTENDEDPRICE
+            description: "Extended price."
+
+          - name: L_DISCOUNT
+            description: "Discount."
+
+          - name: L_TAX
+            description: "Tax percentage."
+
+          - name: L_RETURNFLAG
+            description: "Return flag."
+
+          - name: L_LINESTATUS
+            description: "Line status."
+
+          - name: L_SHIPDATE
+            description: "Ship date."
+
+          - name: L_COMMITDATE
+            description: "Commit date."
+
+          - name: L_RECEIPTDATE
+            description: "Receipt date."
+
+          - name: L_SHIPINSTRUCT
+            description: "Shipping instruction."
+
+          - name: L_SHIPMODE
+            description: "Shipping mode."
+
+          - name: L_COMMENT
+            description: "Line item comment."
+
+      # ---------------------------------------------------------
+      # PART
+      # ---------------------------------------------------------
+      - name: PART
+        description: "Contains part master data."
+
+        columns:
+          - name: P_PARTKEY
+            description: "Unique part identifier."
+            tests:
+              - unique
+              - not_null
+
+          - name: P_NAME
+            description: "Part name."
+            tests:
+              - not_null
+
+          - name: P_TYPE
+            description: "Part type."
+            tests:
+              - not_null
+
+          - name: P_MFGR
+            description: "Manufacturer."
+
+          - name: P_BRAND
+            description: "Brand."
+
+          - name: P_SIZE
+            description: "Part size."
+
+          - name: P_CONTAINER
+            description: "Container."
+
+          - name: P_RETAILPRICE
+            description: "Retail price."
+
+          - name: P_COMMENT
+            description: "Part comment."

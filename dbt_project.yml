@@ -1,0 +1,38 @@
+name: 'hands_on_project_assignment'
+version: '1.0.0'
+config-version: 2
+
+profile: 'hands_on_project_assignment'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+models:
+  hands_on_project_assignment:
+    staging:
+      +materialized: view
+      +schema: staging
+
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  hands_on_project_assignment:
+    +schema: raw
+
+snapshots:
+  hands_on_project_assignment:
+    +schema: snapshots
