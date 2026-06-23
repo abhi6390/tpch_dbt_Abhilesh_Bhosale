@@ -21,5 +21,5 @@ dbt docs serve
 
 ### dbt Docs Generate / Lineage DAG
 
-![dbt Docs Output](<img width="1813" height="741" alt="image" src="https://github.com/user-attachments/assets/c6599d02-7d57-4485-8f1f-5302e92aba0b" />
+!dbt Docs Output(<img width="1813" height="741" alt="image" src="https://github.com/user-attachments/assets/c6599d02-7d57-4485-8f1f-5302e92aba0b" />
 )
