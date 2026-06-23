@@ -16,8 +16,8 @@ dbt docs serve
 
 ### dbt Build Output
 
-![dbt Build Output](<img width="1165" height="593" alt="image" src="https://github.com/user-attachments/assets/1bf41a88-e986-4b26-9cd5-9f782803abfd" />
-)
+![dbt Build Output]([<img width="1813" height="741" alt="image" src="https://github.com/user-attachments/assets/59804444-37fd-48df-885f-2f36e892229c" />
+](url))
 
 ### dbt Docs Generate / Lineage DAG
 
